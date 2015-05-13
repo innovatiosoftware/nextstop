@@ -4,10 +4,10 @@
 var express = require('express');
 var app = express();
 
-var redis = require('redis'),
-    client = redis.createClient();
+//var redis = require('redis'),
+//    client = redis.createClient();
 
-var proximity = require('geo-proximity').initialize(client);
+//var proximity = require('geo-proximity').initialize(client);
 //var path = require('path');
 //var events = require('events');
 //    cps = require('cps');
@@ -29,18 +29,6 @@ var proximity = require('geo-proximity').initialize(client);
 //};
 
 var API_KEY = "AIzaSyCobKNq9ZrtBIJMYOBUfYnr-vBD--Zili8";
-
-var STOPS = [{lat: 18.235253, long: -66.031513, name: "terminal Goyco"},
-    {lat: 18.256513, long: -66.102446, name: "ruta Aguas Buenas"},
-    {lat: 18.256126, long: -65.968022, name: "ruta Gurabo Carr. 181"},
-    {lat: 18.391458, long: -66.074895, name: "ruta Centro Medico"}];
-
-//var BUS_LOCATIONS = [
-//    {1834074},
-//    {},
-//    {},
-//    {},
-//    {}];
 
 var rawData = [
     "REV001844350879+1834074-0660946704420032;ID=356612021342417",
@@ -138,54 +126,110 @@ var rawData = [
     "REV031844355719+1825638-0661028300032932;ID=356612021292984"
 ];
 
+
+var STOPS = [
+    {lat: 18.235253, long: -66.031513, name: "terminal Goyco", id: 1},
+    {lat: 18.256513, long: -66.102446, name: "ruta Aguas Buenas", id: 2},
+    {lat: 18.256126, long: -65.968022, name: "ruta Gurabo Carr. 181", id: 3},
+    {lat: 18.391458, long: -66.074895, name: "ruta Centro Medico", id: 4}
+];
+
+var busRouteAssociation = [
+    {id: 356612021292984, type: 'Corporacion', route: 'Ruta Aguas Buenas', lic: '12522-01839', licType: 'TC', name: 'Torres Alamo, Pedro', busStop: [1, 2]},
+    {id: 356612021334935, type: 'Asociacion', route: 'RUTA DE GURABO', lic: '10-0001-00316', licType: 'TC', name: 'Ortíz Rivera, Jose', busStop: [1, 3]},
+    {id: 356612021342417, type: 'Asociacion', route: 'Ruta Centro Medico', lic: '13319-00325', licType: 'TC', name: 'Martinez Arroyo, Juan', busStop: [1, 4]}
+];
+
 /*AABBBBCDDDDDEEEFFFFFGGGGHHHHHIIIJJJKL
 
-AA: Event index. Range 0-99.
-BBBB: Number of weeks since 00:00 AM January 6, 1980.
-C: Day of week. From 0 to 6 where 0 is Sunday.
-DDDDD: Time of the generated report. Seconds since 00:00 of the current date.
-EEEFFFFF: WGS-84 Latitude. It does include the sign: Positive for north. EEE represents a value in degrees and FFFFF parts of a degree in decimals.
-GGGGHHHHH: WGS-84 Longitude. It does include the sign: Positive for east. GGGG represents a value in degrees and HHHHHparts of a degree in decimals.
-III: Vehicle velocity in mph.
-JJJ: Vehicle heading, in degrees from North increasing eastwardly.
-K: Position fix mode:
-0: 2D GPS
-1: 3D GPS
-2: 2D DGPS
-3: 3D DGPS
-9: Unknown
-L: Age of data used for the report:
-    0: Not available
-1: Older than 10 seconds
-2: Fresh, less than 10 seconds
-9: GPS Failure
-*/
+ AA: Event index. Range 0-99.
+ BBBB: Number of weeks since 00:00 AM January 6, 1980.
+ C: Day of week. From 0 to 6 where 0 is Sunday.
+ DDDDD: Time of the generated report. Seconds since 00:00 of the current date.
+ EEEFFFFF: WGS-84 Latitude. It does include the sign: Positive for north. EEE represents a value in degrees and FFFFF parts of a degree in decimals.
+ GGGGHHHHH: WGS-84 Longitude. It does include the sign: Positive for east. GGGG represents a value in degrees and HHHHHparts of a degree in decimals.
+ III: Vehicle velocity in mph.
+ JJJ: Vehicle heading, in degrees from North increasing eastwardly.
+ K: Position fix mode:
+ 0: 2D GPS
+ 1: 3D GPS
+ 2: 2D DGPS
+ 3: 3D DGPS
+ 9: Unknown
+ L: Age of data used for the report:
+ 0: Not available
+ 1: Older than 10 seconds
+ 2: Fresh, less than 10 seconds
+ 9: GPS Failure
+ */
 
 /*350879 86400*/
 
-function parseGeoLocation(data){
+function parseGeoLocation(data) {
     /*AA: Event index. Range 0-99.
-    BBBB: Number of weeks since 00:00 AM January 6, 1980.
-    C: Day of week. From 0 to 6 where 0 is Sunday.
-    DDDDD: Time of the generated report. Seconds since 00:00 of the current date.
-    EEEFFFFF: WGS-84 Latitude. It does include the sign: Positive for north. EEE represents a value in degrees and FFFFF parts of a degree in decimals.
-    GGGGHHHHH*/
+     BBBB: Number of weeks since 00:00 AM January 6, 1980.
+     C: Day of week. From 0 to 6 where 0 is Sunday.
+     DDDDD: Time of the generated report. Seconds since 00:00 of the current date.
+     EEEFFFFF: WGS-84 Latitude. It does include the sign: Positive for north. EEE represents a value in degrees and FFFFF parts of a degree in decimals.
+     GGGGHHHHH*/
     console.log("data = " + data);
 
-    var eventIndex = data.slice(3,5);
-    var weekNumber = data.slice(5,9);
-    var dayOfWeek = data.slice(9,10);
-    var timeOfGeneratedReport = data.slice(10,15);
-    var latitude = data.slice(15,23);
-    var longitude = data.slice(23,32);
+    var eventIndex = data.slice(3, 5);
+    var weekNumber = data.slice(5, 9);
+    var dayOfWeek = data.slice(9, 10);
+    var timeOfGeneratedReport = data.slice(10, 15);
+    var latitude = data.slice(15, 23);
+    var longitude = data.slice(23, 32);
+    var velocity = data.slice(32, 35);
+    var heading = data.slice(35, 38);
+    var ID = data.slice(44, 60);
 
     console.log("event = *" + eventIndex + "*");
     console.log("weekNumber = *" + weekNumber + "*");
     console.log("dayOfWeek = *" + dayOfWeek + "*");
     console.log("timeOfGeneratedReport = *" + timeOfGeneratedReport + "*");
-    console.log(latitude + "   -  " + longitude);
-    return [latitude, longitude, "unknown"];
+    console.log("velocity = *" + velocity + "*");
+    console.log("heading = *" + heading + "*");
+    console.log("lat = " + latitude + "   -  log = " + longitude);
+    console.log("ID = *" + ID + "*");
 
+    return [latitude, longitude, "unknown"];
+}
+
+function parseObj(data) {
+
+    var eventIndex = data.slice(3, 5);
+    var weekNumber = data.slice(5, 9);
+    var dayOfWeek = data.slice(9, 10);
+    var timeOfGeneratedReport = data.slice(10, 15);
+    var latitude = data.slice(15, 23);
+    var longitude = data.slice(23, 32);
+    var velocity = data.slice(32, 35);
+    var heading = data.slice(35, 38);
+    var ID = data.slice(44, 60);
+
+    console.log("event = *" + eventIndex + "*");
+    console.log("weekNumber = *" + weekNumber + "*");
+    console.log("dayOfWeek = *" + dayOfWeek + "*");
+    console.log("timeOfGeneratedReport = *" + timeOfGeneratedReport + "*");
+    console.log("velocity = *" + velocity + "*");
+    console.log("heading = *" + heading + "*");
+    console.log("lat = " + latitude + "   -  log = " + longitude);
+    console.log("ID = *" + ID + "*");
+
+    return {busId: ID, longitude: longitude, latitude: latitude, velocity: velocity, heading: heading, busStops: getBusStopsAssociatedToBusId(parseInt(ID)), data: data};
+}
+
+function getBusStopsAssociatedToBusId(busId) {
+    var stopIds;
+    for (var idx in busRouteAssociation) {
+        var bra = busRouteAssociation[idx];
+        if (bra.id == busId) {
+            stopIds = bra.busStop;
+            break;
+        }
+    }
+    return  stopIds;
 }
 
 //var returnObj = {price: 1.00, ETA:};
@@ -214,10 +258,36 @@ app.get('/allStops/', function (req, res) {
     res.set(header).status(200).send(STOPS);
 });
 
-app.get('/getNearBusInfo/', function (req, res) {
+app.get('/getNearBusInfo/:lat/:log/:busStopId', function (req, res) {
     console.info("ID " + req.params.id);
+
+    var lat = req.params.lat;
+    var log = req.params.log;
+    var busStopId = req.params.busStopId;
+
+    var list = [];
+    for (var idx in rawData) {
+        var geoBusObj = parseObj(rawData[idx]);
+        list.push(geoBusObj);
+//        console.log(geoBusObj)
+    }
+
+    var filteredList = [];
+    for (var idx in list) {
+        var obj = list[idx];
+        for (var idx2 in obj.busStops) {
+            var listofBusStops = obj.busStops;
+            if (listofBusStops[idx2] == busStopId)
+                filteredList.push(parseGeoLocation(obj.data));
+        }
+    }
+
+    console.log("Original Size = " + list.length);
+    console.log("Size = " + filteredList.length);
+
+
     var header = {'Access-Control-Allow-Origin': '*'};
-    res.set(header).status(200).send(STOPS);
+    res.set(header).status(200).send(filteredList);
 });
 
 
