@@ -6,11 +6,11 @@ PR Public Transportation
 sudo npm install -g ionic
 
 **Install node dependencies**
-npm install
+sudo npm install
 
 
 **Bower install**
-bower install
+sudo bower install
 
 **GOOGLE Distance matrix API**
 
