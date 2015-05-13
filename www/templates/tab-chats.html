@@ -1,19 +1,24 @@
 <ion-view view-title="Destinos">
-  <ion-content>
-    <!--<h4>Destinos</h4>-->
-    <ion-list>
-      <ion-item class="item-remove-animate item-icon-right" ng-repeat="destination in destinations" type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
-        <div>
-        <img class="pull-left" src="img/bus-stop.png" >
-        <h2 class="pull-left">{{destination.name}}</h2>
-        </div>
-        <!--<p>{{//chat.lastText}}</p>-->
-        <i class="icon ion-chevron-right icon-accessory"></i>
+    <ion-content>
+        <!--<h4>Destinos</h4>-->
+        <ion-list>
+            <ion-item class="item-remove-animate item-icon-right" ng-repeat="destination in destinations"
+                      type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
+                <div>
+                    <div class="circle pull-left" style="background-color: #28a54c;margin-top: 10px;margin-right: 5px"></div>
+                    <img class="pull-left" src="img/bus-stop.png" style="width: 30px;height: 30px">
+                    <h2 style="padding-top:5px;padding-left: 10px" class="pull-left">{{destination.name}}</h2>
+                </div>
 
-        <ion-option-button class="button-assertive" ng-click="remove(chat)">
-          Delete
-        </ion-option-button>
-      </ion-item>
-    </ion-list>
-  </ion-content>
+                <i class="icon ion-chevron-right icon-accessory"></i>
+
+                <!--<ion-option-button class="button-assertive" ng-click="remove(chat)">
+                    Delete
+                </ion-option-button>-->
+                <!--<div style="display: ">
+                    <p><i class="fa fa-street-view" style="font-size: 8px"></i></p>
+                </div>-->
+            </ion-item>
+        </ion-list>
+    </ion-content>
 </ion-view>
