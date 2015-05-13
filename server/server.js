@@ -4,10 +4,10 @@
 var express = require('express');
 var app = express();
 
-//var redis = require('redis'),
-//    client = redis.createClient();
+var redis = require('redis'),
+    client = redis.createClient();
+var proximity = require('geo-proximity').initialize(client);
 
-//var proximity = require('geo-proximity').initialize(client);
 //var path = require('path');
 //var events = require('events');
 //    cps = require('cps');
@@ -172,7 +172,7 @@ function parseGeoLocation(data) {
      DDDDD: Time of the generated report. Seconds since 00:00 of the current date.
      EEEFFFFF: WGS-84 Latitude. It does include the sign: Positive for north. EEE represents a value in degrees and FFFFF parts of a degree in decimals.
      GGGGHHHHH*/
-    console.log("data = " + data);
+//    console.log("data = " + data);
 
     var eventIndex = data.slice(3, 5);
     var weekNumber = data.slice(5, 9);
@@ -184,6 +184,7 @@ function parseGeoLocation(data) {
     var heading = data.slice(35, 38);
     var ID = data.slice(44, 60);
 
+    /*
     console.log("event = *" + eventIndex + "*");
     console.log("weekNumber = *" + weekNumber + "*");
     console.log("dayOfWeek = *" + dayOfWeek + "*");
@@ -192,8 +193,23 @@ function parseGeoLocation(data) {
     console.log("heading = *" + heading + "*");
     console.log("lat = " + latitude + "   -  log = " + longitude);
     console.log("ID = *" + ID + "*");
+    */
 
-    return [latitude, longitude, "unknown"];
+    return [addLatitudeDecimalPoint(latitude), addLongitudeDecimalPoint(longitude), "Puerto Rico"];
+}
+
+function addLatitudeDecimalPoint(coord){
+    var firstPart = coord.slice(0,3);
+    var secondPart = coord.slice(2,8);
+    //console.log(firstPart + "." + secondPart);
+    return parseFloat(firstPart + "." + secondPart);
+}
+
+function addLongitudeDecimalPoint(coord){
+    var firstPart = coord.slice(0,4);
+    var secondPart = coord.slice(2,8);
+    //console.log(firstPart + "." + secondPart);
+    return parseFloat(firstPart + "." + secondPart);
 }
 
 function parseObj(data) {
@@ -208,6 +224,7 @@ function parseObj(data) {
     var heading = data.slice(35, 38);
     var ID = data.slice(44, 60);
 
+    /*
     console.log("event = *" + eventIndex + "*");
     console.log("weekNumber = *" + weekNumber + "*");
     console.log("dayOfWeek = *" + dayOfWeek + "*");
@@ -216,8 +233,8 @@ function parseObj(data) {
     console.log("heading = *" + heading + "*");
     console.log("lat = " + latitude + "   -  log = " + longitude);
     console.log("ID = *" + ID + "*");
-
-    return {busId: ID, longitude: longitude, latitude: latitude, velocity: velocity, heading: heading, busStops: getBusStopsAssociatedToBusId(parseInt(ID)), data: data};
+    */
+    return {busId: ID, longitude: addLatitudeDecimalPoint(longitude), latitude: addLongitudeDecimalPoint(latitude), velocity: velocity, heading: heading, busStops: getBusStopsAssociatedToBusId(parseInt(ID)), data: data};
 }
 
 function getBusStopsAssociatedToBusId(busId) {
@@ -282,13 +299,27 @@ app.get('/getNearBusInfo/:lat/:log/:busStopId', function (req, res) {
         }
     }
 
+
+//    var places = proximity.addSet('places');
+    proximity.addLocations(filteredList, function(err, reply){
+        if(err) console.error(err);
+        else console.log('added locations:', reply);
+    })
+
     console.log("Original Size = " + list.length);
     console.log("Size = " + filteredList.length);
 
 
+    proximity.nearby(lat, log, 5000, function(err, places){
+        if(err) console.error(err);
+        else console.log('places nearby:', places);
+    })
+
     var header = {'Access-Control-Allow-Origin': '*'};
     res.set(header).status(200).send(filteredList);
 });
+
+//"https://maps.googleapis.com/maps/api/distancematrix/json?origins=18.2565222,-66.1070666&destinations=18.244883,-66.0854369&mode=driving&language=en-EN&transit_mode=bus&units=imperial&key=AIzaSyCobKNq9ZrtBIJMYOBUfYnr-vBD--Zili8"
 
 
 //app.get('/getAllRefuges/', function (req, response) {
