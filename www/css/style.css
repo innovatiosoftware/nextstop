@@ -1,1 +1,8 @@
 /* Empty. Add your own CSS if you like */
+.img-map-bg{
+    background-image: url(../img/map-full.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 30%;
+    display: block;
+}

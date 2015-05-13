@@ -7,6 +7,7 @@
 
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <link href="lib/fontawesome/css/font-awesome.min.css" rel="stylesheet">
 
     <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
     <link href="css/ionic.app.css" rel="stylesheet">
@@ -24,18 +25,20 @@
     <script src="js/services.js"></script>
   </head>
   <body ng-app="starter">
-    <!--
-      The nav bar that will be updated as we navigate between views.
-    -->
-    <ion-nav-bar class="bar-stable">
+
+    <ion-nav-bar class="bar-positive">
       <ion-nav-back-button>
       </ion-nav-back-button>
     </ion-nav-bar>
-    <!--
-      The views will be rendered in the <ion-nav-view> directive below
-      Templates are in the /templates folder (but you could also
-      have templates inline in this html file if you'd like).
-    -->
-    <ion-nav-view></ion-nav-view>
+
+    <div class="bar-positive" style="height: 40%;display: block;background-color: #387ef5">
+      <div class="container" ui-view></div>
+    </div>
+
+    <!--<ion-nav-view></ion-nav-view>-->
+    <!--<script type="text/javascript" src="lib/angular/angular.js"></script>-->
+    <!--<script type="text/javascript" src="lib/angular-ui-utils/modules/event/event.js"></script>-->
+    <!--<script type="text/javascript" src="lib/angular-ui-map/ui-map.min.js"></script>-->
+    <!--<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=onGoogleReady"></script>-->
   </body>
 </html>
