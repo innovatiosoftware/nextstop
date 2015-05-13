@@ -5,41 +5,40 @@
   The Friends service returns an array of friend data
 -->
 <ion-view >
-  <div class="img-map-bg">
-    <div style="padding-top: 50px">
-      <img class="pull-left" src="img/bus-stop.png" style="width: 64px; height: 64px">
-      <h3 class="pull-left" style="margin-left: 10px">Aguas Buenas</h3>
+    <div class="img-map-bg">
+        <div style="padding-top: 50px">
+            <img class="pull-left" src="img/bus-stop.png" style="width: 64px; height: 64px">
+            <h3 class="pull-left" style="margin-left: 10px">{{destination.name}}</h3>
+        </div>
     </div>
-  </div>
-  <ion-content class="">
+    <ion-content class="">
 
-    <div style="margin-top: 155px">
-      <div style="height:30px;display: block;background-color: #28a54c">
-        <div class="pull-left" style="width: 45%;padding: 4px 5px;text-align: center">
-          <i class="fa fa-map-marker"></i>&nbsp;Current Location
+        <div style="margin-top: 155px">
+            <div style="height:30px;display: block;background-color: {{destination.color}}">
+                <div class="pull-left" style="width: 45%;padding: 4px 5px;text-align: center">
+                    <i class="fa fa-map-marker"></i>&nbsp;Current Location
+                </div>
+                <div class="pull-left" style="width: 10%;padding: 4px">
+                    <i class="fa fa-arrow-right"></i>
+                </div>
+                <div class="pull-left" style="width: 45%;padding: 4px 5px;text-align: center">
+                    {{destination.name}}
+                </div>
+            </div>
+            <div class="card">
+                <div class="item item-text-wrap">
+                    <label style="font-size: 50px;margin: 0;padding: 0">ETA: 25 min</label>
+                </div>
+                <div style="padding: 0 10px">
+                    Tiempo de viaje estimado: <strong>14 min</strong>
+                </div>
+                <div style="padding: 0 10px">
+                    Tarifa: <strong>$1.00</strong>
+                </div>
+                <div style="padding: 0 10px">
+                    Conductor: <strong>Juan Del Pueblo</strong>
+                </div>
+            </div>
         </div>
-        <div class="pull-left" style="width: 10%;padding: 4px">
-          <i class="fa fa-arrow-right"></i>
-        </div>
-        <div class="pull-left" style="width: 45%;padding: 4px 5px;text-align: center">
-          Aguas Buenas
-        </div>
-      </div>
-      <div class="card">
-        <div class="item item-text-wrap">
-          <label style="font-size: 50px;margin: 0;padding: 0">ETA: 25 min</label>
-        </div>
-        <div style="padding: 0 10px">
-          Tiempo de viaje estimado: <strong>14 min</strong>
-        </div>
-          <div style="padding: 0 10px">
-              Tarifa: <strong>$1.00</strong>
-          </div>
-
-          <div style="padding: 0 10px">
-              Conductor: <strong>Juan del Pueblo</strong>
-          </div>
-      </div>
-    </div>
-  </ion-content>
+    </ion-content>
 </ion-view>
