@@ -2,10 +2,12 @@
   <ion-content>
     <!--<h4>Destinos</h4>-->
     <ion-list>
-      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="destination in destinations" type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
-        <img ng-src="img/map.png">
-        <h2>{{destination.name}}</h2>
-        <p>{{chat.lastText}}</p>
+      <ion-item class="item-remove-animate item-icon-right" ng-repeat="destination in destinations" type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
+        <div>
+        <img class="pull-left" src="img/bus-stop.png" >
+        <h2 class="pull-left">{{destination.name}}</h2>
+        </div>
+        <!--<p>{{//chat.lastText}}</p>-->
         <i class="icon ion-chevron-right icon-accessory"></i>
 
         <ion-option-button class="button-assertive" ng-click="remove(chat)">
