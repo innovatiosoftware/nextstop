@@ -5,6 +5,13 @@ PR Public Transportation
 
 sudo npm install -g ionic
 
+**Install node dependencies**
+npm install
+
+
+**Bower install**
+bower install
+
 **GOOGLE Distance matrix API**
 
 https://maps.googleapis.com/maps/api/distancematrix/json
