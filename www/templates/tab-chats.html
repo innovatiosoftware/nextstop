@@ -3,9 +3,9 @@
         <!--<h4>Destinos</h4>-->
         <ion-list>
             <ion-item class="item-remove-animate item-icon-right" ng-repeat="destination in destinations"
-                      type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
+                      type="item-text-wrap" href="#/tab/chats/{{$index}}">
                 <div>
-                    <div class="circle pull-left" style="background-color: #28a54c;margin-top: 10px;margin-right: 5px"></div>
+                    <div class="circle pull-left" style="background-color: {{destination.color}};margin-top: 10px;margin-right: 5px"></div>
                     <img class="pull-left" src="img/bus-stop.png" style="width: 30px;height: 30px">
                     <h2 style="padding-top:5px;padding-left: 10px" class="pull-left">{{destination.name}}</h2>
                 </div>
