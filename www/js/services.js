@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
 
-    .factory('Chats', function () {
+    .factory('Chats', function ($http, $q) {
         // Might use a resource here that returns a JSON array
 
         // Some fake testing data
@@ -33,10 +33,11 @@ angular.module('starter.services', [])
 
 
         var destinations = [
-            {lat: 18.235253, long: -66.031513, name: "Terminal Goyco",type:1,color:'#'+Math.floor(Math.random()*16777215).toString(16)},
-            {lat: 18.256513, long: -66.102446, name: "Ruta Aguas Buenas",type:2,color:'#'+Math.floor(Math.random()*16777215).toString(16)},
-            {lat: 18.256126, long: -65.968022, name: "Ruta Gurabo Carr. 181",type:2,color:'#'+Math.floor(Math.random()*16777215).toString(16)},
-            {lat: 18.391458, long: -66.074895, name: "Ruta Centro Medico",type:2,color:'#'+Math.floor(Math.random()*16777215).toString(16)}];
+            {lat: 18.235253, long: -66.031513, name: "Terminal Goyco", type: 1, color: '#' + Math.floor(Math.random() * 16777215).toString(16)},
+            {lat: 18.256513, long: -66.102446, name: "Ruta Aguas Buenas", type: 2, color: '#' + Math.floor(Math.random() * 16777215).toString(16)},
+            {lat: 18.256126, long: -65.968022, name: "Ruta Gurabo Carr. 181", type: 2, color: '#' + Math.floor(Math.random() * 16777215).toString(16)},
+            {lat: 18.391458, long: -66.074895, name: "Ruta Centro Medico", type: 2, color: '#' + Math.floor(Math.random() * 16777215).toString(16)}
+        ];
 
 
         return {

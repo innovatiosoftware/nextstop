@@ -3,30 +3,14 @@
  */
 var express = require('express');
 var app = express();
+var request = require('request');
 
 var redis = require('redis'),
     client = redis.createClient();
 var proximity = require('geo-proximity').initialize(client);
-
-//var path = require('path');
-//var events = require('events');
-//    cps = require('cps');
-
-//db = require('node-mysql');
+var baseUrl = "https://maps.googleapis.com/maps/api/distancematrix/json?";
 
 //app.use(express.static(path.join(__dirname, '/../www')));
-
-//var DB = db.DB;
-//var BaseRow = db.Row;
-//var BaseTable = db.Table;
-//
-//var dbConfig = {
-//    host: 'localhost',
-//    user: 'root',
-//    password: 'admin',
-////    password: 'my2@1*',
-//    database: 'techsummit'
-//};
 
 var API_KEY = "AIzaSyCobKNq9ZrtBIJMYOBUfYnr-vBD--Zili8";
 
@@ -123,17 +107,36 @@ var rawData = [
     "REV011844355665+1825628-0661026500706132;ID=356612021292984",
     "REV011844355671+1825636-0661026900624232;ID=356612021292984",
     "REV011844355680+1825636-0661028100331332;ID=356612021292984",
-    "REV031844355719+1825638-0661028300032932;ID=356612021292984"
-];
-
-
+    "REV031844355719+1825638-0661028300032932;ID=356612021292984",
+    "REV121844374856+1822204-0660511600022032;ID=356612021292984",
+    "REV021844374857+1822204-0660511600022032;ID=356612021292984",
+    "REV011844374871+1838877-0660742601526232;ID=356612021342417",
+    "REV011844374877+1822188-0660511300910332;ID=356612021292984",
+    "REV011844374879+1838914-0660747102233832;ID=356612021342417",
+    "REV011844374901+1822224-0660509100535732;ID=356612021292984",
+    "REV011844374924+1839202-0660753901901232;ID=356612021342417",
+    "REV011844374938+1839300-0660748800705232;ID=356612021342417",
+    "REV011844374943+1839307-0660748100305932;ID=356612021342417",
+    "REV011844374948+1839313-0660747300703232;ID=356612021342417",
+    "REV011844374960+1839358-0660746601202532;ID=356612021342417",
+    "REV011844374964+1839375-0660745801303932;ID=356612021342417",
+    "REV011844374995+1839520-0660735401601332;ID=356612021342417",
+    "REV011844375000+1839542-0660736201031932;ID=356612021342417",
+    "REV011844375005+1839546-0660738501026432;ID=356612021342417",
+    "REV011844375010+1839539-0660740300922032;ID=356612021342417",
+    "REV031844375027+1839482-0660743800019932;ID=356612021342417",
+    "REV121844375027+1839482-0660743800019932;ID=356612021342417",
+    "REV011844375055+1822567-0660570400725832;ID=356612021292984",
+    "REV011844375161+1821894-0660657700417832;ID=356612021292984",
+    "REV011844375165+1821886-0660657400314232;ID=356612021292984",
+    "REV031844375168+1821886-0660657400014232;ID=356612021292984",
+    "REV121844375168+1821886-0660657400014232;ID=356612021292984"];
 var STOPS = [
     {lat: 18.235253, long: -66.031513, name: "terminal Goyco", id: 1},
     {lat: 18.256513, long: -66.102446, name: "ruta Aguas Buenas", id: 2},
     {lat: 18.256126, long: -65.968022, name: "ruta Gurabo Carr. 181", id: 3},
     {lat: 18.391458, long: -66.074895, name: "ruta Centro Medico", id: 4}
 ];
-
 var busRouteAssociation = [
     {id: 356612021292984, type: 'Corporacion', route: 'Ruta Aguas Buenas', lic: '12522-01839', licType: 'TC', name: 'Torres Alamo, Pedro', busStop: [1, 2]},
     {id: 356612021334935, type: 'Asociacion', route: 'RUTA DE GURABO', lic: '10-0001-00316', licType: 'TC', name: 'Ortíz Rivera, Jose', busStop: [1, 3]},
@@ -185,30 +188,30 @@ function parseGeoLocation(data) {
     var ID = data.slice(44, 60);
 
     /*
-    console.log("event = *" + eventIndex + "*");
-    console.log("weekNumber = *" + weekNumber + "*");
-    console.log("dayOfWeek = *" + dayOfWeek + "*");
-    console.log("timeOfGeneratedReport = *" + timeOfGeneratedReport + "*");
-    console.log("velocity = *" + velocity + "*");
-    console.log("heading = *" + heading + "*");
-    console.log("lat = " + latitude + "   -  log = " + longitude);
-    console.log("ID = *" + ID + "*");
-    */
+     console.log("event = *" + eventIndex + "*");
+     console.log("weekNumber = *" + weekNumber + "*");
+     console.log("dayOfWeek = *" + dayOfWeek + "*");
+     console.log("timeOfGeneratedReport = *" + timeOfGeneratedReport + "*");
+     console.log("velocity = *" + velocity + "*");
+     console.log("heading = *" + heading + "*");
+     console.log("lat = " + latitude + "   -  log = " + longitude);
+     console.log("ID = *" + ID + "*");
+     */
 
-    return [addLatitudeDecimalPoint(latitude), addLongitudeDecimalPoint(longitude), "Puerto Rico"];
+    return [addLatitudeDecimalPoint(latitude), addLongitudeDecimalPoint(longitude), "Caguas"];
 }
 
-function addLatitudeDecimalPoint(coord){
-    var firstPart = coord.slice(0,3);
-    var secondPart = coord.slice(2,8);
-    //console.log(firstPart + "." + secondPart);
+function addLatitudeDecimalPoint(coord) {
+    var firstPart = coord.slice(0, 3);
+    var secondPart = coord.slice(3, 9);
+    console.log(firstPart + "." + secondPart);
     return parseFloat(firstPart + "." + secondPart);
 }
 
-function addLongitudeDecimalPoint(coord){
-    var firstPart = coord.slice(0,4);
-    var secondPart = coord.slice(2,8);
-    //console.log(firstPart + "." + secondPart);
+function addLongitudeDecimalPoint(coord) {
+    var firstPart = coord.slice(0, 4);
+    var secondPart = coord.slice(4, 9);
+    console.log(firstPart + "." + secondPart);
     return parseFloat(firstPart + "." + secondPart);
 }
 
@@ -225,15 +228,15 @@ function parseObj(data) {
     var ID = data.slice(44, 60);
 
     /*
-    console.log("event = *" + eventIndex + "*");
-    console.log("weekNumber = *" + weekNumber + "*");
-    console.log("dayOfWeek = *" + dayOfWeek + "*");
-    console.log("timeOfGeneratedReport = *" + timeOfGeneratedReport + "*");
-    console.log("velocity = *" + velocity + "*");
-    console.log("heading = *" + heading + "*");
-    console.log("lat = " + latitude + "   -  log = " + longitude);
-    console.log("ID = *" + ID + "*");
-    */
+     console.log("event = *" + eventIndex + "*");
+     console.log("weekNumber = *" + weekNumber + "*");
+     console.log("dayOfWeek = *" + dayOfWeek + "*");
+     console.log("timeOfGeneratedReport = *" + timeOfGeneratedReport + "*");
+     console.log("velocity = *" + velocity + "*");
+     console.log("heading = *" + heading + "*");
+     console.log("lat = " + latitude + "   -  log = " + longitude);
+     console.log("ID = *" + ID + "*");
+     */
     return {busId: ID, longitude: addLatitudeDecimalPoint(longitude), latitude: addLongitudeDecimalPoint(latitude), velocity: velocity, heading: heading, busStops: getBusStopsAssociatedToBusId(parseInt(ID)), data: data};
 }
 
@@ -249,8 +252,6 @@ function getBusStopsAssociatedToBusId(busId) {
     return  stopIds;
 }
 
-//var returnObj = {price: 1.00, ETA:};
-
 var server = app.listen(8002, function () {
     console.log('Listening on port %d', server.address().port);
 });
@@ -258,15 +259,6 @@ var server = app.listen(8002, function () {
 app.use(function (err, req, res, next) {
     console.error(err.stack);
     res.send(500, 'Something broke!');
-});
-
-
-app.get('/doTest/:id', function (req, res) {
-    console.info("ID " + req.params.id);
-    var header = {'Access-Control-Allow-Origin': '*'};
-    console.log(rawData);
-    parseGeoLocation(rawData[0]);
-    res.set(header).status(200).send("Hola francisco esto es solo una test");
 });
 
 app.get('/allStops/', function (req, res) {
@@ -286,7 +278,6 @@ app.get('/getNearBusInfo/:lat/:log/:busStopId', function (req, res) {
     for (var idx in rawData) {
         var geoBusObj = parseObj(rawData[idx]);
         list.push(geoBusObj);
-//        console.log(geoBusObj)
     }
 
     var filteredList = [];
@@ -294,373 +285,50 @@ app.get('/getNearBusInfo/:lat/:log/:busStopId', function (req, res) {
         var obj = list[idx];
         for (var idx2 in obj.busStops) {
             var listofBusStops = obj.busStops;
-            if (listofBusStops[idx2] == busStopId)
+            if (listofBusStops[idx2] == busStopId) {
                 filteredList.push(parseGeoLocation(obj.data));
+            }
         }
     }
 
+    for (var idx in filteredList) {
+        console.log(filteredList[idx]);
+    }
 
-//    var places = proximity.addSet('places');
-    proximity.addLocations(filteredList, function(err, reply){
-        if(err) console.error(err);
-        else console.log('added locations:', reply);
-    })
+//    console.log("last feed = " + filteredList[filteredList.length - 1]);
+//    console.log("Original Size = " + list.length);
+//    console.log("Size = " + filteredList.length);
 
-    console.log("Original Size = " + list.length);
-    console.log("Size = " + filteredList.length);
+    var lastFeed = filteredList[filteredList.length - 1];
+    var busStopObj = getBusStop(busStopId);
 
+    console.log(lastFeed);
+    var params1 = "origins=" + lat + "," + log + "&destinations=" + lastFeed[0] + "," + lastFeed[1] + "&mode=driving&language=en-EN&transit_mode=bus&units=imperial&key=" + API_KEY;
+    var params2 = "origins=" + lat + "," + log + "&destinations=" + busStopObj.lat + "," + busStopObj.long + "&mode=driving&language=en-EN&transit_mode=bus&units=imperial&key=" + API_KEY;
+    var urlTohit = baseUrl + params1;
 
-    proximity.nearby(lat, log, 5000, function(err, places){
-        if(err) console.error(err);
-        else console.log('places nearby:', places);
-    })
+    request(urlTohit, function (error, response, body) {
+        var googleResponse = JSON.parse(body);
+        console.log(googleResponse);
+        console.log(googleResponse.rows[0]);
+        var values = googleResponse.rows[0].elements;
+        console.log(values[0].distance);
+        console.log(values[0].duration);
+        var header = {'Access-Control-Allow-Origin': '*'};
+        res.set(header).status(200).send({time: values[0].duration.text, distance: values[0].distance.text});
+    });
 
-    var header = {'Access-Control-Allow-Origin': '*'};
-    res.set(header).status(200).send(filteredList);
 });
 
-//"https://maps.googleapis.com/maps/api/distancematrix/json?origins=18.2565222,-66.1070666&destinations=18.244883,-66.0854369&mode=driving&language=en-EN&transit_mode=bus&units=imperial&key=AIzaSyCobKNq9ZrtBIJMYOBUfYnr-vBD--Zili8"
+function getBusStop(busStopId) {
+    var returnedObj;
+    for (var idx in STOPS) {
+        if (STOPS[idx].id == busStopId) {
+            returnedObj = STOPS[idx];
+            break;
+        }
+    }
+    return returnedObj;
+}
 
-
-//app.get('/getAllRefuges/', function (req, response) {
-//    var header = {'Access-Control-Allow-Origin': '*'};
-//
-//    var qry = 'SELECT * FROM REGUFEE WHERE LATITUDE IS NOT NULL AND LONGITUDE IS NOT NULL';
-//    var box = new DB(dbConfig);
-//    box.connect(function (conn, cb) {
-//
-//        cps.seq([
-//            function (_, cb) {
-//                conn.query(qry, cb)
-//            },
-//            function (res, cb) {
-//                response.set(header).status(200).send(res);
-//                cb();
-//            }
-//        ], cb);
-//    }, function () {
-//        var handleError = function (e) {
-//            if (e.stack) {
-//                console.log(e.stack);
-//            } else {
-//                console.log(e);
-//            }
-//        };
-//
-//        var start = new Date();
-//        return function (err, res) {
-//            try {
-//                var end = new Date();
-//                console.log('time spent: ', end - start);
-//                if (err) {
-//                    handleError(err);
-//                } else {
-////                    console.log(res);
-//                }
-//                box.end();
-//            } catch (e) {
-//                handleError(e);
-//                box.end();
-//            }
-//        };
-//    }());
-//});
-//
-//app.get('/getRefugeById/:id', function (req, response) {
-//    var header = {'Access-Control-Allow-Origin': '*'};
-//
-//    var qry = 'SELECT * FROM REGUFEE WHERE ID = ' + req.params.id;
-//    var box = new DB(dbConfig);
-//    box.connect(function (conn, cb) {
-//
-//        cps.seq([
-//            function (_, cb) {
-//                conn.query(qry, cb)
-//            },
-//            function (res, cb) {
-////                console.log("DATA =" + res);
-//
-//                response.set(header).status(200).send(res);
-//                cb();
-//            }
-//        ], cb);
-//    }, function () {
-//        var handleError = function (e) {
-//            if (e.stack) {
-//                console.log(e.stack);
-//            } else {
-//                console.log(e);
-//            }
-//        };
-//
-//        var start = new Date();
-//        return function (err, res) {
-//            try {
-//                var end = new Date();
-//                console.log('time spent: ', end - start);
-//                if (err) {
-//                    handleError(err);
-//                } else {
-////                    console.log(res);
-//                }
-//                box.end();
-//            } catch (e) {
-//                handleError(e);
-//                box.end();
-//            }
-//        };
-//    }());
-//});
-//
-//app.get('/getCommentCategories/', function (req, response) {
-//    var header = {'Access-Control-Allow-Origin': '*'};
-//
-//    var qry = 'SELECT COMMENT_CATEGORY FROM COMMENT_TOKENIZER GROUP BY COMMENT_CATEGORY ORDER BY COMMENT_CATEGORY';
-//    var box = new DB(dbConfig);
-//    box.connect(function (conn, cb) {
-//
-//        cps.seq([
-//            function (_, cb) {
-//                conn.query(qry, cb)
-//            },
-//            function (res, cb) {
-////                console.log("DATA =" + res);
-//
-//                response.set(header).status(200).send(res);
-//                cb();
-//            }
-//        ], cb);
-//    }, function () {
-//        var handleError = function (e) {
-//            if (e.stack) {
-//                console.log(e.stack);
-//            } else {
-//                console.log(e);
-//            }
-//        };
-//
-//        var start = new Date();
-//        return function (err, res) {
-//            try {
-//                var end = new Date();
-//                console.log('time spent: ', end - start);
-//                if (err) {
-//                    handleError(err);
-//                } else {
-////                    console.log(res);
-//                }
-//                box.end();
-//            } catch (e) {
-//                handleError(e);
-//                box.end();
-//            }
-//        };
-//    }());
-//});
-//
-//app.get('/getConditionCategories/', function (req, response) {
-//    var header = {'Access-Control-Allow-Origin': '*'};
-//    var qry = 'SELECT COMMENT_CATEGORY FROM COMMENT_TOKENIZER GROUP BY COMMENT_CATEGORY ORDER BY COMMENT_CATEGORY';
-//    var box = new DB(dbConfig);
-//    box.connect(function (conn, cb) {
-//
-//        cps.seq([
-//            function (_, cb) {
-//                conn.query(qry, cb)
-//            },
-//            function (res, cb) {
-////                console.log("DATA =" + res);
-//
-//                response.set(header).status(200).send(res);
-//                cb();
-//            }
-//        ], cb);
-//    }, function () {
-//        var handleError = function (e) {
-//            if (e.stack) {
-//                console.log(e.stack);
-//            } else {
-//                console.log(e);
-//            }
-//        };
-//
-//        var start = new Date();
-//        return function (err, res) {
-//            try {
-//                var end = new Date();
-//                console.log('time spent: ', end - start);
-//                if (err) {
-//                    handleError(err);
-//                } else {
-////                    console.log(res);
-//                }
-//                box.end();
-//            } catch (e) {
-//                handleError(e);
-//                box.end();
-//            }
-//        };
-//    }());
-//});
-//
-//app.get('/getAllMunicipalities/', function (req, response) {
-//    var header = {'Access-Control-Allow-Origin': '*'};
-//    var qry = 'SELECT MUNICIPIO, COUNT(*) AS TOTAL FROM REGUFEE GROUP BY MUNICIPIO ORDER BY MUNICIPIO';
-//    var box = new DB(dbConfig);
-//    box.connect(function (conn, cb) {
-//
-//        cps.seq([
-//            function (_, cb) {
-//                conn.query(qry, cb)
-//            },
-//            function (res, cb) {
-////                console.log("DATA =" + res);
-//
-//                response.set(header).status(200).send(res);
-//                cb();
-//            }
-//        ], cb);
-//    }, function () {
-//        var handleError = function (e) {
-//            if (e.stack) {
-//                console.log(e.stack);
-//            } else {
-//                console.log(e);
-//            }
-//        };
-//
-//        var start = new Date();
-//        return function (err, res) {
-//            try {
-//                var end = new Date();
-//                console.log('time spent: ', end - start);
-//                if (err) {
-//                    handleError(err);
-//                } else {
-////                    console.log(res);
-//                }
-//                box.end();
-//            } catch (e) {
-//                handleError(e);
-//                box.end();
-//            }
-//        };
-//    }());
-//});
-//
-//app.get('/getRefugeByMunicipality/:municipality', function (req, response) {
-//    var header = {'Access-Control-Allow-Origin': '*'};
-//    var municipality = req.params.municipality;
-//    console.log(municipality);
-//    var qry = 'SELECT * FROM REGUFEE WHERE MUNICIPIO = \'' + municipality + '\'';
-//    var box = new DB(dbConfig);
-//    box.connect(function (conn, cb) {
-//
-//        cps.seq([
-//            function (_, cb) {
-//                conn.query(qry, cb)
-//            },
-//            function (res, cb) {
-////                console.log("DATA =" + res);
-//                response.set(header).status(200).send(res);
-//                cb();
-//            }
-//        ], cb);
-//    }, function () {
-//        var handleError = function (e) {
-//            if (e.stack) {
-//                console.log(e.stack);
-//            } else {
-//                console.log(e);
-//            }
-//        };
-//
-//        var start = new Date();
-//        return function (err, res) {
-//            try {
-//                var end = new Date();
-//                console.log('time spent: ', end - start);
-//                if (err) {
-//                    handleError(err);
-//                } else {
-////                    console.log(res);
-//                }
-//                box.end();
-//            } catch (e) {
-//                handleError(e);
-//                box.end();
-//            }
-//        };
-//    }());
-//});
-//
-//app.get('/getNearbyRefuges/:lat/:lon', function (req, response) {
-//    var header = {'Access-Control-Allow-Origin': '*'};
-//    var lat = req.params.lat;
-//    var lon = req.params.lon;
-//
-//    console.log(lat);
-//    console.log(lon);
-//
-//    var qry = 'SELECT *, SQRT(POW(69.1 * (latitude - ' + lat + '), 2) + POW(69.1 * (' + lon + ' - longitude) * COS(latitude / 57.3), 2)) AS distance ' +
-//        'FROM REGUFEE ' +
-//        'HAVING distance < 3 ' +
-//        'ORDER BY distance ';
-//    var box = new DB(dbConfig);
-//    box.connect(function (conn, cb) {
-//
-//        cps.seq([
-//            function (_, cb) {
-//                conn.query(qry, cb)
-//            },
-//            function (res, cb) {
-////                console.log("DATA =" + res);
-//                response.set(header).status(200).send(res);
-//                cb();
-//            }
-//        ], cb);
-//    }, function () {
-//        var handleError = function (e) {
-//            if (e.stack) {
-//                console.log(e.stack);
-//            } else {
-//                console.log(e);
-//            }
-//        };
-//
-//        var start = new Date();
-//        return function (err, res) {
-//            try {
-//                var end = new Date();
-//                console.log('time spent: ', end - start);
-//                if (err) {
-//                    handleError(err);
-//                } else {
-////                    console.log(res);
-//                }
-//                box.end();
-//            } catch (e) {
-//                handleError(e);
-//                box.end();
-//            }
-//        };
-//    }());
-//});
-//
-////LOCAL SERVICES
-//app.get('/getAllRefugesLocal/', function (req, response) {
-//    var header = {'Access-Control-Allow-Origin': '*'};
-//    response.set(header).status(200).send(refuge);
-//
-//});
-//app.get('/getAllMunicipalitiesLocal/', function (req, response) {
-//    var header = {'Access-Control-Allow-Origin': '*'};
-//    response.set(header).status(200).send(allMunicipalities);
-//
-//});
-//app.get('/getConditionCategories/', function (req, response) {
-//    var header = {'Access-Control-Allow-Origin': '*'};
-//    response.set(header).status(200).send(allConditionCategories);
-//
-//});
-
+//"https://maps.googleapis.com/maps/api/distancematrix/json?origins=18.2565222,-66.1070666&destinations=18.244883,-66.0854369&mode=driving&language=en-EN&transit_mode=bus&units=imperial&key=AIzaSyCobKNq9ZrtBIJMYOBUfYnr-vBD--Zili8"//
