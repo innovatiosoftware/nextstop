@@ -303,9 +303,9 @@ app.get('/getNearBusInfo/:lat/:log/:busStopId', function (req, res) {
     var busStopObj = getBusStop(busStopId);
 
     console.log(lastFeed);
-    var params1 = "origins=" + lat + "," + log + "&destinations=" + lastFeed[0] + "," + lastFeed[1] + "&mode=driving&language=en-EN&transit_mode=bus&units=imperial&key=" + API_KEY;
+    var params1 = "origins=" + lastFeed[0] + "," + lastFeed[1] + "&destinations=" + lat + "," + log + "&mode=driving&language=en-EN&transit_mode=bus&units=imperial&key=" + API_KEY;
     var params2 = "origins=" + lat + "," + log + "&destinations=" + busStopObj.lat + "," + busStopObj.long + "&mode=driving&language=en-EN&transit_mode=bus&units=imperial&key=" + API_KEY;
-    var urlTohit = baseUrl + params1;
+    var urlTohit = baseUrl + params2;
 
     request(urlTohit, function (error, response, body) {
         var googleResponse = JSON.parse(body);
@@ -314,8 +314,19 @@ app.get('/getNearBusInfo/:lat/:log/:busStopId', function (req, res) {
         var values = googleResponse.rows[0].elements;
         console.log(values[0].distance);
         console.log(values[0].duration);
-        var header = {'Access-Control-Allow-Origin': '*'};
-        res.set(header).status(200).send({time: values[0].duration.text, distance: values[0].distance.text});
+        urlTohit = baseUrl + params1;
+
+        request(urlTohit, function (error, response, body) {
+            var googleResponse2 = JSON.parse(body);
+            console.log(googleResponse2);
+            console.log(googleResponse2.rows[0]);
+            var values2 = googleResponse2.rows[0].elements;
+            console.log(values2[0].distance);
+            console.log(values2[0].duration);
+
+            var header = {'Access-Control-Allow-Origin': '*'};
+            res.set(header).status(200).send({time: values[0].duration.text, distance: values[0].distance.text, busNearTime: values2[0].duration.text, busDistance:values2[0].distance.text});
+        });
     });
 
 });
@@ -330,5 +341,3 @@ function getBusStop(busStopId) {
     }
     return returnedObj;
 }
-
-//"https://maps.googleapis.com/maps/api/distancematrix/json?origins=18.2565222,-66.1070666&destinations=18.244883,-66.0854369&mode=driving&language=en-EN&transit_mode=bus&units=imperial&key=AIzaSyCobKNq9ZrtBIJMYOBUfYnr-vBD--Zili8"//

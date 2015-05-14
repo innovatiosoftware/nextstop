@@ -25,7 +25,12 @@ angular.module('starter.controllers', [])
         $http({method: 'GET', url: baseUrl + 'getNearBusInfo/' + lat + '/' + long + '/' + busStopId })
             .success(function (data, status, headers, config) {
                 console.log({destination: Chats.destinations()[index], nearbyInfo: {time: data.time, distance: data.distance}});
-                $scope.destination = {destination: Chats.destinations()[index], nearbyInfo: {time: data.time, distance: data.distance}};
+                $scope.destination = {
+                    destination: Chats.destinations()[index],
+                    nearbyInfo: {time: data.time,
+                    distance: data.distance,
+                    busNearTime: data.busNearTime,
+                    busDistance: data.busDistance}};
             })
             .error(function (data, status, headers, config) {
                 console.log(status || ":" || data || "Request getNearBusInfo failed");
